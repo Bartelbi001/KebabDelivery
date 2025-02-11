@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KebabDelivery.Infrastructur
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{43D2E597-7805-4066-BF48-3F92F69F9669}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KebabDelivery.Tests", "src\KebabDelivery.Tests\KebabDelivery.Tests.csproj", "{6D0A62A3-B05A-45FF-BBFC-8DD9B9D7A34D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +39,10 @@ Global
 		{EE8074FE-8145-4813-8A92-4816FF780A05}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE8074FE-8145-4813-8A92-4816FF780A05}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE8074FE-8145-4813-8A92-4816FF780A05}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D0A62A3-B05A-45FF-BBFC-8DD9B9D7A34D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D0A62A3-B05A-45FF-BBFC-8DD9B9D7A34D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D0A62A3-B05A-45FF-BBFC-8DD9B9D7A34D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D0A62A3-B05A-45FF-BBFC-8DD9B9D7A34D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -46,5 +52,6 @@ Global
 		{CE5279CA-A471-4EDA-A5D2-FAF909D4E977} = {C186800C-3DEC-4FA9-B2D0-8B8DEE03D389}
 		{9345D683-440A-47C0-87CE-4EDD5EDF4EA3} = {C186800C-3DEC-4FA9-B2D0-8B8DEE03D389}
 		{EE8074FE-8145-4813-8A92-4816FF780A05} = {C186800C-3DEC-4FA9-B2D0-8B8DEE03D389}
+		{6D0A62A3-B05A-45FF-BBFC-8DD9B9D7A34D} = {C186800C-3DEC-4FA9-B2D0-8B8DEE03D389}
 	EndGlobalSection
 EndGlobal
