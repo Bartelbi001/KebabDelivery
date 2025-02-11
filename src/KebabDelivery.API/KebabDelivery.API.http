@@ -1,0 +1,6 @@
+@KebabDelivery.API_HostAddress = http://localhost:5116
+
+GET {{KebabDelivery.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
