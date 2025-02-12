@@ -10,6 +10,7 @@ public class Product
     public string? ImageUrl { get; private set; }
     public bool IsComposite { get; private set; }
     public List<ProductIngredient> ProductIngredients { get; private set; } = new();
+    public List<ProductSize> ProductSizes { get; private set; } = new();
 
 
     private Product() { }

@@ -10,10 +10,20 @@ public class ProductIngredient
     public Guid IngredientId { get; private set; }
     public Ingredient Ingredient { get; private set; }
 
+    public decimal Quantity { get; private set; }
+
     private ProductIngredient() { }
 
-    public static Result<ProductIngredient> Create(Guid productId, Guid ingredientId)
+    public static Result<ProductIngredient> Create(Guid productId, Guid ingredientId, decimal quantity)
     {
-        return Result.Ok(new ProductIngredient { ProductId = productId, IngredientId = ingredientId });
+        if (quantity <= 0)
+            return Result.Fail("Количество ингредиента должно быть положительным.");
+
+        return Result.Ok(new ProductIngredient
+        {
+            ProductId = productId,
+            IngredientId = ingredientId,
+            Quantity = quantity
+        });
     }
 }
