@@ -7,8 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Data\EntityConfigurations\" />
     <Folder Include="Cashing\" />
+    <Folder Include="Data\ExternalServices\" />
+    <Folder Include="Data\Repositories\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\KebabDelivery.Domain\KebabDelivery.Domain.csproj" />
   </ItemGroup>
 
 </Project>
