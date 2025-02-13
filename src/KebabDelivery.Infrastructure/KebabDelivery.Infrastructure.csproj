@@ -8,9 +8,7 @@
 
   <ItemGroup>
     <Folder Include="Data\EntityConfigurations\" />
-    <Folder Include="ExternalServices\" />
     <Folder Include="Cashing\" />
-    <Folder Include="Repositories\" />
   </ItemGroup>
 
 </Project>
