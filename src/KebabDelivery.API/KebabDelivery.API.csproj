@@ -25,12 +25,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
     <Folder Include="Middlewares\" />
     <Folder Include="Configurations\" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\KebabDelivery.Application\KebabDelivery.Application.csproj" />
     <ProjectReference Include="..\KebabDelivery.Infrastructure\KebabDelivery.Infrastructure.csproj" />
   </ItemGroup>
 
