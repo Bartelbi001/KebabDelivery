@@ -1,3 +1,12 @@
-﻿namespace KebabDelivery.Application.DTOs;
+﻿using KebabDelivery.Domain.Entities;
 
-public record class ProductResponse(Guid Id, string Name, decimal Price, string Description);
+namespace KebabDelivery.Application.DTOs;
+
+public record class ProductResponse(
+    Guid Id,
+    string Name,
+    string Description,
+    string? ImageUrl,
+    bool IsComposite,
+    List<ProductSize> ProductSizes,
+    List<ProductIngredient> ProductIngredients);
