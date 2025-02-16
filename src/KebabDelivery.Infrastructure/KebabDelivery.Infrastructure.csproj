@@ -9,7 +9,6 @@
   <ItemGroup>
     <Folder Include="Cashing\" />
     <Folder Include="Data\ExternalServices\" />
-    <Folder Include="Data\Repositories\" />
   </ItemGroup>
 
   <ItemGroup>
