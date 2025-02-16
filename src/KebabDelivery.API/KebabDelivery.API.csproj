@@ -30,4 +30,8 @@
     <Folder Include="Configurations\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\KebabDelivery.Infrastructure\KebabDelivery.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
