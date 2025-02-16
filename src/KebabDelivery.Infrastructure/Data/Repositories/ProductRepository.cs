@@ -6,7 +6,7 @@ namespace KebabDelivery.Infrastructure.Data.Repositories;
 
 public class ProductRepository : IProductRepository
 {
-    private ApplicationDbContext _context;
+    private readonly ApplicationDbContext _context;
 
     public ProductRepository(ApplicationDbContext context)
     {
