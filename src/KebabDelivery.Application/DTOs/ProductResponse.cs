@@ -6,7 +6,7 @@ public record class ProductResponse(
     Guid Id,
     string Name,
     string Description,
-    string? ImageUrl,
+    string ImageUrl,
     bool IsComposite,
     List<ProductSize> ProductSizes,
     List<ProductIngredient> ProductIngredients);
