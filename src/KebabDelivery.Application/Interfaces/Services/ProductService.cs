@@ -17,7 +17,7 @@ public class ProductService : IProductService
 
     public async Task<ProductResponse> CreateAsync(ProductRequest request)
     {
-        var result = Product.Create(request.Name, request.Description, request.ImageUrl, request.IsComposite);
+        var result = Product.Create(request.Name, request.Description, request.ImageUrl, request.IsComposite, request.IsVisible);
         if (result.IsFailed)
             throw new Exception(result.Errors.First().Message);
 
@@ -38,7 +38,9 @@ public class ProductService : IProductService
     public async Task<List<ProductResponse>> GetAllAsync()
     {
         var products = await _productRepository.GetAllAsync();
-        return products.ToResponceList();
+        return products
+            .Where(p => p.IsVisible)
+            .ToResponceList();
     }
 
     public async Task<ProductResponse?> GetByIdAsync(Guid id)
@@ -52,11 +54,8 @@ public class ProductService : IProductService
         var product = await _productRepository.GetByIdAsync(id);
         if (product is null) return null;
 
-        var updatedProduct = Product.Create(request.Name, request.Description, request.ImageUrl, request.IsComposite);
-        if (updatedProduct.IsFailed)
-            throw new Exception(updatedProduct.Errors.First().Message);
+        product.Update(request.Name, request.Description, request.ImageUrl, request.IsComposite, request.IsVisible);
 
-        product = updatedProduct.Value;
         await _productRepository.UpdateAsync(product);
 
         return product.ToResponse();
