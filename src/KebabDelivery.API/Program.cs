@@ -1,3 +1,5 @@
+using KebabDelivery.Application.Interfaces.Services;
+using KebabDelivery.Application.Interfaces.Services.Interfaces;
 using KebabDelivery.Infrastructure.Data;
 using KebabDelivery.Infrastructure.Data.Repositories;
 using KebabDelivery.Infrastructure.Data.Repositories.Interfaces;
@@ -30,6 +32,7 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IProductService, ProductService>();
 
 var app = builder.Build();
 
