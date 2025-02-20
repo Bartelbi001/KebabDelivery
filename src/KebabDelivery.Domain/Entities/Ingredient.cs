@@ -12,7 +12,7 @@ public class Ingredient
     public decimal Carbohydrates { get; private set; }
     public bool IsAlcoholic { get; private set; }
     public bool ContainsLactose { get; private set; }
-    public List<ProductIngredient> productIngredients { get; private set; } = new();
+    public List<ProductIngredient> ProductIngredients { get; private set; } = new();
 
     private Ingredient() { }
 

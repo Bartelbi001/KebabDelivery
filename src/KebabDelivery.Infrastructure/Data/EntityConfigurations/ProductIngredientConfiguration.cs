@@ -16,7 +16,7 @@ class ProductIngredientConfiguration : IEntityTypeConfiguration<ProductIngredien
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(pi => pi.Ingredient)
-            .WithMany(i => i.productIngredients)
+            .WithMany(i => i.ProductIngredients)
             .HasForeignKey(pi => pi.IngredientId)
             .OnDelete(DeleteBehavior.Cascade);
     }
