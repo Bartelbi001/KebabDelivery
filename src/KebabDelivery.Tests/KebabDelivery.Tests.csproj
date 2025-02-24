@@ -33,11 +33,4 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="IntegrationTests\Controllers\" />
-    <Folder Include="IntegrationTests\DataBase\" />
-    <Folder Include="UnitTests\Services\" />
-    <Folder Include="UnitTests\Repositories\" />
-  </ItemGroup>
-
 </Project>
