@@ -3,6 +3,7 @@ using KebabDelivery.Application.Interfaces.Services.Interfaces;
 using KebabDelivery.Application.Mapping;
 using KebabDelivery.Domain.Entities;
 using KebabDelivery.Infrastructure.Data.Repositories.Interfaces;
+using System.ComponentModel.DataAnnotations;
 
 namespace KebabDelivery.Application.Interfaces.Services;
 
@@ -19,7 +20,7 @@ public class ProductService : IProductService
     {
         var result = Product.Create(request.Name, request.Description, request.ImageUrl, request.IsComposite, request.IsVisible);
         if (result.IsFailed)
-            throw new Exception(result.Errors.First().Message);
+            throw new ValidationException(result.Errors.First().Message);
 
         var product = result.Value;
         await _productRepository.AddAsync(product);

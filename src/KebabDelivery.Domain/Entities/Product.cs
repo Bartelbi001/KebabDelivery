@@ -1,4 +1,5 @@
 ﻿using FluentResults;
+using System.ComponentModel.DataAnnotations;
 
 namespace KebabDelivery.Domain.Entities;
 
@@ -41,13 +42,13 @@ public class Product
     public void Update(string name, string description, string imageUrl, bool isComrosite, bool isVisible)
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new ArgumentException("Название продукта не может быть пустым.");
+            throw new ValidationException("Название продукта не может быть пустым.");
 
         if (string.IsNullOrWhiteSpace(description))
-            throw new ArgumentException("Описание продукта не может быть пустым.");
+            throw new ValidationException("Описание продукта не может быть пустым.");
 
         if (string.IsNullOrWhiteSpace(imageUrl))
-            throw new ArgumentException("URL изображения не может быть пустым.");
+            throw new ValidationException("URL изображения не может быть пустым.");
 
         Name = name;
         Description = description;
