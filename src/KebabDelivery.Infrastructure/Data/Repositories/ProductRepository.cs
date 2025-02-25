@@ -22,11 +22,10 @@ public class ProductRepository : IProductRepository
     public async Task DeleteAsync(Guid id)
     {
         var product = await _context.Products.FindAsync(id);
-        if (product != null)
-        {
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
-        }
+        if (product is null) return;
+
+        _context.Products.Remove(product);
+        await _context.SaveChangesAsync();
     }
 
     public async Task<List<Product>> GetAllAsync()
@@ -41,7 +40,25 @@ public class ProductRepository : IProductRepository
 
     public async Task UpdateAsync(Product product)
     {
-        _context.Products.Update(product);
+        if (_context.Database.ProviderName == "Microsoft.EntityFrameworkCore.InMemory")
+        {
+            var existingProduct = await _context.Products.FindAsync(product.Id);
+            if (existingProduct == null) return;
+
+            _context.Entry(existingProduct).CurrentValues.SetValues(product);
+        }
+        else
+        {
+            _context.Products.Update(product);
+        }
+
         await _context.SaveChangesAsync();
     }
+
+
+    //public async Task UpdateAsync(Product product)
+    //{
+    //    _context.Products.Update(product);
+    //    await _context.SaveChangesAsync();
+    //}
 }
