@@ -14,7 +14,6 @@ public class Product
     public List<ProductIngredient> ProductIngredients { get; private set; } = new();
     public List<ProductSize> ProductSizes { get; private set; } = new();
 
-
     private Product() { }
 
     public static Result<Product> Create(string name, string description, string? imageUrl, bool isComposite, bool isVisible)
