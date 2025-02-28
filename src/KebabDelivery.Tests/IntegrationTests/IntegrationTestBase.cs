@@ -44,13 +44,21 @@ public class IntegrationTestBase : IAsyncLifetime
         Client = _factory.CreateClient();
     }
 
+    public async Task InitializeAsync()
+    {
+        // Запускаем контейнер с PostgreSQL
+        await _dbContainer.StartAsync();
+
+        // Создаём БД без накатывания миграций
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            db.Database.EnsureCreated(); // Создаёт схему БД без миграций
+        }
+    }
+
     public async Task DisposeAsync()
     {
         await _dbContainer.StopAsync();
-    }
-
-    public async Task InitializeAsync()
-    {
-        await _dbContainer.StartAsync();
     }
 }
