@@ -1,13 +1,10 @@
-﻿using FluentResults;
-using System.ComponentModel.DataAnnotations;
-
-namespace KebabDelivery.Domain.Entities;
+﻿namespace KebabDelivery.Domain.Entities;
 
 public class Product
 {
     public Guid Id { get; private set; }
     public string Name { get; private set; }
-    public string Description { get; private set; } = string.Empty;
+    public string Description { get; private set; }
     public string ImageUrl { get; private set; }
     public bool IsComposite { get; private set; }
     public bool IsVisible { get; private set; } = true;
@@ -16,39 +13,23 @@ public class Product
 
     private Product() { }
 
-    public static Result<Product> Create(string name, string description, string? imageUrl, bool isComposite, bool isVisible)
+    private Product(Guid id, string name, string description, string imageUrl, bool isComposite, bool isVisible)
     {
-        if (string.IsNullOrWhiteSpace(name))
-            return Result.Fail("Название продукта не может быть пустым.");
+        Id = id;
+        Name = name;
+        Description = description;
+        ImageUrl = imageUrl;
+        IsComposite = isComposite;
+        IsVisible = isVisible;
+    }
 
-        if (string.IsNullOrWhiteSpace(description))
-            return Result.Fail("Описание продукта не может быть пустым.");
-
-        if (string.IsNullOrWhiteSpace(imageUrl))
-            return Result.Fail("URL изображения не может быть пустым.");
-
-        return Result.Ok(new Product
-        {
-            Id = Guid.NewGuid(),
-            Name = name,
-            Description = description,
-            ImageUrl = imageUrl,
-            IsComposite = isComposite,
-            IsVisible = isVisible
-        });
+    public static Product Create(string name, string description, string imageUrl, bool isComposite, bool isVisible)
+    {
+        return new Product(Guid.NewGuid(), name, description, imageUrl, isComposite, isVisible);
     }
 
     public void Update(string name, string description, string imageUrl, bool isComrosite, bool isVisible)
     {
-        if (string.IsNullOrWhiteSpace(name))
-            throw new ValidationException("Название продукта не может быть пустым.");
-
-        if (string.IsNullOrWhiteSpace(description))
-            throw new ValidationException("Описание продукта не может быть пустым.");
-
-        if (string.IsNullOrWhiteSpace(imageUrl))
-            throw new ValidationException("URL изображения не может быть пустым.");
-
         Name = name;
         Description = description;
         ImageUrl = imageUrl;
