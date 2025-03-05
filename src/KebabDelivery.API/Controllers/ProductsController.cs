@@ -18,16 +18,13 @@ public class ProductsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<ProductResponse>>> GetAll()
     {
-        var products = await _productService.GetAllAsync();
-        return Ok(products);
+        return Ok(await _productService.GetAllAsync());
     }
 
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<ProductResponse>> GetById(Guid id)
     {
-        var product = await _productService.GetByIdAsync(id);
-        if (product is null) return NotFound();
-        return Ok(product);
+        return Ok(await _productService.GetByIdAsync(id));
     }
 
     [HttpPost]
@@ -38,18 +35,16 @@ public class ProductsController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
-    public async Task<IActionResult> Update(Guid id, ProductRequest request)
+    public async Task<ActionResult<ProductResponse>> Update(Guid id, ProductRequest request)
     {
         var updatedProduct = await _productService.UpdateAsync(id, request);
-        if (updatedProduct is null) return NotFound();
-        return NoContent();
+        return Ok(updatedProduct);
     }
 
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
         var success = await _productService.DeleteAsync(id);
-        if (!success) return NotFound();
         return NoContent();
     }
 }
