@@ -13,6 +13,7 @@ public static class ProductMapping
             product.Description,
             product.ImageUrl,
             product.IsComposite,
+            product.IsVisible,
             product.ProductSizes,
             product.ProductIngredients);
     }
