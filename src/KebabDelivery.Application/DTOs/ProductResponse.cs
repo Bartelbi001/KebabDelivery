@@ -8,5 +8,6 @@ public record class ProductResponse(
     string Description,
     string ImageUrl,
     bool IsComposite,
+    bool IsVisible,
     List<ProductSize> ProductSizes,
     List<ProductIngredient> ProductIngredients);
