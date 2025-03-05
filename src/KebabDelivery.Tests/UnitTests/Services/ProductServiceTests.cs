@@ -1,22 +1,26 @@
-﻿using KebabDelivery.Application.DTOs;
+﻿using FluentValidation;
+using FluentValidation.Results;
+using KebabDelivery.Application.DTOs;
 using KebabDelivery.Application.Interfaces.Services;
 using KebabDelivery.Application.Interfaces.Services.Interfaces;
 using KebabDelivery.Domain.Entities;
 using KebabDelivery.Infrastructure.Data.Repositories.Interfaces;
 using Moq;
-using System.ComponentModel.DataAnnotations;
+using ValidationException = FluentValidation.ValidationException;
 
 namespace KebabDelivery.Tests.UnitTests.Services;
 
 public class ProductServiceTests
 {
     private readonly Mock<IProductRepository> _productRepositoryMock;
+    private readonly Mock<IValidator<Product>> _validatorMock;
     private readonly IProductService _productService;
 
     public ProductServiceTests()
     {
         _productRepositoryMock = new Mock<IProductRepository>();
-        _productService = new ProductService(_productRepositoryMock.Object);
+        _validatorMock = new Mock<IValidator<Product>>();
+        _productService = new ProductService(_productRepositoryMock.Object, _validatorMock.Object);
     }
 
     public class CreateAsyncTests : ProductServiceTests
@@ -27,7 +31,11 @@ public class ProductServiceTests
             // Arrange
             var request = new ProductRequest("Шаурма", "Острая шаурма с курицей", "https://example.com/shawarma.jpg", true, true);
 
-            var product = Product.Create(request.Name, request.Description, request.ImageUrl, request.IsComposite, request.IsVisible).Value;
+            var product = Product.Create(request.Name, request.Description, request.ImageUrl, request.IsComposite, request.IsVisible);
+
+            // Мокаем валидацию (валидация проходит успешно)
+            _validatorMock.Setup(v => v.ValidateAsync(It.IsAny<Product>(), default))
+                .ReturnsAsync(new ValidationResult());
 
             _productRepositoryMock.Setup(repo => repo.AddAsync(It.IsAny<Product>()))
                 .Returns(Task.CompletedTask);
@@ -40,6 +48,9 @@ public class ProductServiceTests
             Assert.Equal(request.Name, response.Name);
             Assert.Equal(request.Description, response.Description);
             Assert.Equal(request.ImageUrl, response.ImageUrl);
+
+            // Проверяем, что метод AddAsync вызывался 1 раз
+            _productRepositoryMock.Verify(repo => repo.AddAsync(It.IsAny<Product>()), Times.Once);
         }
 
         [Fact]
@@ -48,8 +59,21 @@ public class ProductServiceTests
             // Arrange
             var request = new ProductRequest("    ", "", "", true, true);
 
+            var validationFailures = new List<ValidationFailure>()
+            {
+                new ValidationFailure("Name", "Поле 'Name' не может быть пустым."),
+                new ValidationFailure("Description", "Поле 'Description' не может быть пустым."),
+                new ValidationFailure("ImageUrl", "Поле 'ImageUrl' не может быть пустым.")
+            };
+
+            _validatorMock.Setup(v => v.ValidateAsync(It.IsAny<Product>(), default))
+                .ReturnsAsync(new ValidationResult(validationFailures));
+
             // Act & Assert
             await Assert.ThrowsAsync<ValidationException>(() => _productService.CreateAsync(request));
+
+            // Убеждаемся, что AddAsync не вызывается при ошибке валидации
+            _productRepositoryMock.Verify(repo => repo.AddAsync(It.IsAny<Product>()), Times.Never);
         }
     }
 
@@ -60,7 +84,7 @@ public class ProductServiceTests
         {
             // Arrange
             var productId = Guid.NewGuid();
-            var product = Product.Create("Шаурма", "Описание", "https://example.com/shawarma.jpg", true, true).Value;
+            var product = Product.Create("Шаурма", "Описание", "https://example.com/shawarma.jpg", true, true);
 
             _productRepositoryMock.Setup(repo => repo.GetByIdAsync(productId))
                 .ReturnsAsync(product);
@@ -73,10 +97,13 @@ public class ProductServiceTests
             Assert.Equal(product.Name, response.Name);
             Assert.Equal(product.Description, response.Description);
             Assert.Equal(product.ImageUrl, response.ImageUrl);
+
+            // Проверяем, что GetByIdAsync вызывался 1 раз с нужным ID
+            _productRepositoryMock.Verify(repo => repo.GetByIdAsync(productId), Times.Once);
         }
 
         [Fact]
-        public async Task GetByIdAsync_ProductDoesNotExist_ReturnsNull()
+        public async Task GetByIdAsync_ProductDoesNotExist_ThrowsKeyNotFoundException()
         {
             // Arrange
             var productId = Guid.NewGuid();
@@ -84,11 +111,10 @@ public class ProductServiceTests
             _productRepositoryMock.Setup(repo => repo.GetByIdAsync(productId))
                 .ReturnsAsync((Product?)null);
 
-            // Act
-            var response = await _productService.GetByIdAsync(productId);
+            // Act & Assert
+            await Assert.ThrowsAsync<KeyNotFoundException>(() => _productService.GetByIdAsync(productId));
 
-            // Assert
-            Assert.Null(response);
+            _productRepositoryMock.Verify(repo => repo.GetByIdAsync(productId), Times.Once);
         }
     }
 
@@ -100,8 +126,9 @@ public class ProductServiceTests
             // Arrange
             var products = new List<Product>
             {
-                Product.Create("Шаурма", "Описание", "https://example.com/shawarma.jpg", true, true).Value,
-                Product.Create("Кебаб", "Описание", "https://example.com/kebab.jpg", true, true).Value
+                Product.Create("Шаурма", "Описание", "https://example.com/shawarma.jpg", true, true),
+                Product.Create("Кебаб", "Описание", "https://example.com/kebab.jpg", true, true),
+                Product.Create("Скрытый продукт", "Описание", "https://example.com/hidden.jpg", true, false) // Этот не должен попасть в результат
             };
 
             _productRepositoryMock.Setup(repo => repo.GetAllAsync())
@@ -112,9 +139,12 @@ public class ProductServiceTests
 
             // Assert
             Assert.NotNull(response);
-            Assert.Equal(2, response.Count);
+            Assert.Equal(2, response.Count); // Только 2 продукта видимые
             Assert.Equal("Шаурма", response[0].Name);
             Assert.Equal("Кебаб", response[1].Name);
+
+            // Проверяем, что метод GetAllAsync вызывался 1 раз
+            _productRepositoryMock.Verify(repo => repo.GetAllAsync(), Times.Once);
         }
 
         [Fact]
@@ -130,6 +160,9 @@ public class ProductServiceTests
             // Assert
             Assert.NotNull(response);
             Assert.Empty(response);
+
+            // Проверяем, что метод GetAllAsync вызывался 1 раз
+            _productRepositoryMock.Verify(repo => repo.GetAllAsync(), Times.Once);
         }
     }
 
@@ -140,7 +173,7 @@ public class ProductServiceTests
         {
             // Arrange
             var productId = Guid.NewGuid();
-            var existingProduct = Product.Create("Шаурма", "Описание", "https://example.com/shawarma.jpg", true, true).Value;
+            var existingProduct = Product.Create("Шаурма", "Описание", "https://example.com/shawarma.jpg", true, true);
             var updatedRequest = new ProductRequest("Лаваш", "Обновленный", "https://example.com/lavash.jpg", true, true);
 
             _productRepositoryMock.Setup(repo => repo.GetByIdAsync(productId))
@@ -148,6 +181,9 @@ public class ProductServiceTests
 
             _productRepositoryMock.Setup(repo => repo.UpdateAsync(It.IsAny<Product>()))
                 .Returns(Task.CompletedTask);
+
+            _validatorMock.Setup(v => v.ValidateAsync(It.IsAny<Product>(), default))
+                .ReturnsAsync(new ValidationResult());
 
             // Act
             var response = await _productService.UpdateAsync(productId, updatedRequest);
@@ -157,10 +193,16 @@ public class ProductServiceTests
             Assert.Equal(updatedRequest.Name, response.Name);
             Assert.Equal(updatedRequest.Description, response.Description);
             Assert.Equal(updatedRequest.ImageUrl, response.ImageUrl);
+
+            // Проверяем, что GetByIdAsync вызывался 1 раз
+            _productRepositoryMock.Verify(repo => repo.GetByIdAsync(productId), Times.Once);
+
+            // Проверяем, что UpdateAsync вызывался 1 раз
+            _productRepositoryMock.Verify(repo => repo.UpdateAsync(It.IsAny<Product>()), Times.Once);
         }
 
         [Fact]
-        public async Task UpdateAsync_ProductDoesNotExist_ReturnsNull()
+        public async Task UUpdateAsync_ProductDoesNotExist_ThrowsKeyNotFoundException()
         {
             // Arrange
             var productId = Guid.NewGuid();
@@ -169,11 +211,14 @@ public class ProductServiceTests
             _productRepositoryMock.Setup(repo => repo.GetByIdAsync(productId))
                 .ReturnsAsync((Product?)null);
 
-            // Act
-            var response = await _productService.UpdateAsync(productId, updatedRequest);
+            // Act & Assert
+            await Assert.ThrowsAsync<KeyNotFoundException>(() => _productService.UpdateAsync(productId, updatedRequest));
 
-            // Assert
-            Assert.Null(response);
+            // Проверяем, что GetByIdAsync вызывался 1 раз
+            _productRepositoryMock.Verify(repo => repo.GetByIdAsync(productId), Times.Once);
+
+            // Убеждаемся, что UpdateAsync НЕ вызывается
+            _productRepositoryMock.Verify(repo => repo.UpdateAsync(It.IsAny<Product>()), Times.Never);
         }
 
         [Fact]
@@ -182,14 +227,30 @@ public class ProductServiceTests
             // Arrange
             var productId = Guid.NewGuid();
             var invalidRequest = new ProductRequest("      ", "", "", true, true);
-
-            var existingProduct = Product.Create("Шаурма", "Описание", "https://example.com/shawarma.jpg", true, true).Value;
+            var existingProduct = Product.Create("Шаурма", "Описание", "https://example.com/shawarma.jpg", true, true);
 
             _productRepositoryMock.Setup(repo => repo.GetByIdAsync(productId))
                 .ReturnsAsync(existingProduct);
 
+            // Мокаем неудачную валидацию
+            var validationFailures = new List<ValidationFailure>()
+            {
+                new ValidationFailure("Name", "Поле 'Name' не может быть пустым."),
+                new ValidationFailure("Description", "Поле 'Description' не может быть пустым."),
+                new ValidationFailure("ImageUrl", "Поле 'ImageUrl' не может быть пустым.")
+            };
+
+            _validatorMock.Setup(v => v.ValidateAsync(It.IsAny<Product>(), default))
+                .ReturnsAsync(new ValidationResult(validationFailures));
+
             // Act & Assert
             await Assert.ThrowsAsync<ValidationException>(() => _productService.UpdateAsync(productId, invalidRequest));
+
+            // Проверяем, что GetByIdAsync вызывался 1 раз
+            _productRepositoryMock.Verify(repo => repo.GetByIdAsync(productId), Times.Once);
+
+            // Убеждаемся, что UpdateAsync НЕ вызывается при невалидных данных
+            _productRepositoryMock.Verify(repo => repo.UpdateAsync(It.IsAny<Product>()), Times.Never);
         }
     }
 
@@ -200,7 +261,7 @@ public class ProductServiceTests
         {
             // Arrange
             var productId = Guid.NewGuid();
-            var existingProduct = Product.Create("Шаурма", "Описание", "https://example.com/shawarma.jpg", true, true).Value;
+            var existingProduct = Product.Create("Шаурма", "Описание", "https://example.com/shawarma.jpg", true, true);
 
             _productRepositoryMock.Setup(repo => repo.GetByIdAsync(productId))
                 .ReturnsAsync(existingProduct);
@@ -213,6 +274,9 @@ public class ProductServiceTests
 
             // Assert
             Assert.True(result);
+
+            // Проверяем, что `GetByIdAsync` был вызван ровно 1 раз
+            _productRepositoryMock.Verify(repo => repo.GetByIdAsync(productId), Times.Once);
 
             // Проверяем, что метод `DeleteAsync` был вызван ровно 1 раз
             _productRepositoryMock.Verify(repo => repo.DeleteAsync(productId), Times.Once);
@@ -227,11 +291,11 @@ public class ProductServiceTests
             _productRepositoryMock.Setup(repo => repo.GetByIdAsync(productId))
                 .ReturnsAsync((Product?)null);
 
-            // ACT
-            var result = await _productService.DeleteAsync(productId);
+            // Act & Assert
+            await Assert.ThrowsAsync<KeyNotFoundException>(() => _productService.DeleteAsync(productId));
 
-            // Assert
-            Assert.False(result);
+            // Проверяем, что `GetByIdAsync` был вызван ровно 1 раз
+            _productRepositoryMock.Verify(repo => repo.GetByIdAsync(productId), Times.Once);
 
             // Проверяем, что `DeleteAsync(id)` вообще не вызывался
             _productRepositoryMock.Verify(repo => repo.DeleteAsync(It.IsAny<Guid>()), Times.Never);

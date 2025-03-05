@@ -29,7 +29,7 @@ public class ProductRepositoryTests : IDisposable
     public async Task CreateAsync_ValidProduct_SavesToDatabase()
     {
         // Arrange
-        var product = Product.Create("Шаурма", "Описание", "https://example.com/shawarma.jpg", true, true).Value;
+        var product = Product.Create("Шаурма", "Описание", "https://example.com/shawarma.jpg", true, true);
 
         // Act
         await _repository.AddAsync(product);
@@ -47,7 +47,7 @@ public class ProductRepositoryTests : IDisposable
     public async Task GetByIdAsync_ProductExists_ReturnsProduct()
     {
         // Arrange
-        var product = Product.Create("Шаурма", "Описание", "https://example.com/shawarma.jpg", true, true).Value;
+        var product = Product.Create("Шаурма", "Описание", "https://example.com/shawarma.jpg", true, true);
         _context.Products.Add(product);
         await _context.SaveChangesAsync(); // Сохраняем в InMemoryDatabase
 
@@ -81,8 +81,8 @@ public class ProductRepositoryTests : IDisposable
         // Arrange
         var products = new List<Product>()
         {
-            Product.Create("Шаурма", "Описание", "https://example.com/shawarma.jpg", true, true).Value,
-            Product.Create("Кебаб", "Описание", "https://example.com/kebab.jpg", true, true).Value
+            Product.Create("Шаурма", "Описание", "https://example.com/shawarma.jpg", true, true),
+            Product.Create("Кебаб", "Описание", "https://example.com/kebab.jpg", true, true)
         };
 
         _context.Products.AddRange(products);
@@ -115,7 +115,7 @@ public class ProductRepositoryTests : IDisposable
     public async Task UpdateAsync_ProductExists_UpdatesProduct()
     {
         // Arrange
-        var product = Product.Create("Шаурма", "Описание", "https://example.com/shawarma.jpg", true, true).Value;
+        var product = Product.Create("Шаурма", "Описание", "https://example.com/shawarma.jpg", true, true);
         _context.Products.Add(product);
         await _context.SaveChangesAsync();
 
@@ -139,7 +139,7 @@ public class ProductRepositoryTests : IDisposable
     public async Task UpdateAsync_ProductDoesNotExist_DoesNothing()
     {
         // Arrange
-        var product = Product.Create("Шаурма", "Описание", "https://example.com/shawarma.jpg", true, true).Value;
+        var product = Product.Create("Шаурма", "Описание", "https://example.com/shawarma.jpg", true, true);
 
         // Act
         await _repository.UpdateAsync(product);
