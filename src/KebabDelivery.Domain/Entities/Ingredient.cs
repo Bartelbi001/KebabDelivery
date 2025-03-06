@@ -1,6 +1,4 @@
-﻿using FluentResults;
-
-namespace KebabDelivery.Domain.Entities;
+﻿namespace KebabDelivery.Domain.Entities;
 
 public class Ingredient
 {
@@ -14,35 +12,33 @@ public class Ingredient
     public bool ContainsLactose { get; private set; }
     public List<ProductIngredient> ProductIngredients { get; private set; } = new();
 
-    private Ingredient() { }
+    protected Ingredient() { }
 
-    public static Result<Ingredient> Create(string name, decimal calories, decimal proteins, decimal fats, decimal carbs, bool isAlcoholic, bool containsLactose)
+    private Ingredient(Guid id, string name, decimal calories, decimal proteins, decimal fats, decimal carbs, bool isAlcoholic, bool containsLactose)
     {
-        if (string.IsNullOrWhiteSpace(name))
-            return Result.Fail("Название ингредиента не может быть пустым.");
+        Id = id;
+        Name = name;
+        Calories = calories;
+        Proteins = proteins;
+        Fats = fats;
+        Carbohydrates = carbs;
+        IsAlcoholic = isAlcoholic;
+        ContainsLactose = containsLactose;
+    }
 
-        if (calories < 0)
-            return Result.Fail("Калории не могут быть отрицательными.");
+    public static Ingredient Create(string name, decimal calories, decimal proteins, decimal fats, decimal carbs, bool isAlcoholic, bool containsLactose)
+    {
+        return new Ingredient(Guid.NewGuid(), name, calories, proteins, fats, carbs, isAlcoholic, containsLactose);
+    }
 
-        if (proteins < 0)
-            return Result.Fail("Белки не могут быть отрицательными.");
-
-        if (fats < 0)
-            return Result.Fail("Жиры не могут быть отрицательными.");
-
-        if (carbs < 0)
-            return Result.Fail("Углеводы не могут быть отрицательными.");
-
-        return Result.Ok(new Ingredient
-        {
-            Id = Guid.NewGuid(),
-            Name = name,
-            Calories = calories,
-            Proteins = proteins,
-            Fats = fats,
-            Carbohydrates = carbs,
-            IsAlcoholic = isAlcoholic,
-            ContainsLactose = containsLactose
-        });
+    public void Update(string name, decimal calories, decimal proteins, decimal fats, decimal carbs, bool isAlcoholic, bool containsLactose)
+    {
+        Name = name;
+        Calories = calories;
+        Proteins = proteins;
+        Fats = fats;
+        Carbohydrates = carbs;
+        IsAlcoholic = isAlcoholic;
+        ContainsLactose = containsLactose;
     }
 }
