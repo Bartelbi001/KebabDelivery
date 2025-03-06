@@ -50,7 +50,7 @@ public class ProductService : IProductService
         var products = await _productRepository.GetAllAsync();
         return products
             .Where(p => p.IsVisible)
-            .ToResponceList();
+            .ToResponseList();
     }
 
     public async Task<ProductResponse> GetByIdAsync(Guid id)

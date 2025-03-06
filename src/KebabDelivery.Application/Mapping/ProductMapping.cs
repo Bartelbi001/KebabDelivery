@@ -18,7 +18,7 @@ public static class ProductMapping
             product.ProductIngredients);
     }
 
-    public static List<ProductResponse> ToResponceList(this IEnumerable<Product> products)
+    public static List<ProductResponse> ToResponseList(this IEnumerable<Product> products)
     {
         return products.Select(p => p.ToResponse()).ToList();
     }
