@@ -15,7 +15,7 @@ public class ProductRepository : IProductRepository
 
     public async Task AddAsync(Product product)
     {
-        _context.Products.Add(product);
+        await _context.Products.AddAsync(product);
         await _context.SaveChangesAsync();
     }
 
