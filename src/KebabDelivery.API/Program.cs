@@ -32,6 +32,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 // ✅ Подключаем FluentValidation
+// (Автоматически регистрируем все валидаторы из текущей сборки)
 builder.Services.AddValidatorsFromAssemblyContaining<ProductValidator>();
 
 // ✅ Настраиваем базу данных
