@@ -11,7 +11,7 @@ public class Product
     public List<ProductIngredient> ProductIngredients { get; private set; } = new();
     public List<ProductSize> ProductSizes { get; private set; } = new();
 
-    protected Product() { }
+    private Product() { }
 
     private Product(Guid id, string name, string description, string imageUrl, bool isComposite, bool isVisible)
     {

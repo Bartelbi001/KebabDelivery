@@ -12,7 +12,7 @@ public class Ingredient
     public bool ContainsLactose { get; private set; }
     public List<ProductIngredient> ProductIngredients { get; private set; } = new();
 
-    protected Ingredient() { }
+    private Ingredient() { }
 
     private Ingredient(Guid id, string name, decimal calories, decimal proteins, decimal fats, decimal carbs, bool isAlcoholic, bool containsLactose)
     {
