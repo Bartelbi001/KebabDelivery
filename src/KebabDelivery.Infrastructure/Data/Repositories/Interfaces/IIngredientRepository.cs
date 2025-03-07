@@ -2,7 +2,7 @@
 
 namespace KebabDelivery.Infrastructure.Data.Repositories.Interfaces;
 
-interface IIngredientRepository
+public interface IIngredientRepository
 {
     Task<Ingredient?> GetByIdAsync(Guid id);
     Task<List<Ingredient>> GetAllAsync();
