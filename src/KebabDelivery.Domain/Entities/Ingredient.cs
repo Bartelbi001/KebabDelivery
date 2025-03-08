@@ -1,44 +1,27 @@
-﻿namespace KebabDelivery.Domain.Entities;
+﻿using KebabDelivery.Domain.Base;
 
-public class Ingredient
+namespace KebabDelivery.Domain.Entities;
+
+public class Ingredient : Consumable
 {
-    public Guid Id { get; private set; }
-    public string Name { get; private set; }
-    public decimal Calories { get; private set; }
-    public decimal Proteins { get; private set; }
-    public decimal Fats { get; private set; }
-    public decimal Carbohydrates { get; private set; }
-    public bool IsAlcoholic { get; private set; }
-    public bool ContainsLactose { get; private set; }
-    public List<ProductIngredient> ProductIngredients { get; private set; } = new();
+    public bool IsComposite { get; private set; }
+    public List<IngredientIngredient> SubIngredients { get; private set; } = new();
+    public DateTime CreatedAt { get; private set; }
+    public DateTime UpdatedAt { get; private set; }
 
-    private Ingredient() { }
-
-    private Ingredient(Guid id, string name, decimal calories, decimal proteins, decimal fats, decimal carbs, bool isAlcoholic, bool containsLactose)
+    private Ingredient() : base(string.Empty, false, false, 0, 0, 0, 0)
     {
-        Id = id;
-        Name = name;
-        Calories = calories;
-        Proteins = proteins;
-        Fats = fats;
-        Carbohydrates = carbs;
-        IsAlcoholic = isAlcoholic;
-        ContainsLactose = containsLactose;
+        CreatedAt = DateTime.UtcNow;
+        UpdatedAt = CreatedAt;
     }
 
-    public static Ingredient Create(string name, decimal calories, decimal proteins, decimal fats, decimal carbs, bool isAlcoholic, bool containsLactose)
+    public Ingredient(string name, bool isComposite, decimal calories, decimal proteins, decimal fats, decimal carbohydrates, bool isAlcoholic, bool containsLactose)
+        : base(name, isAlcoholic, containsLactose, calories, proteins, fats, carbohydrates)
     {
-        return new Ingredient(Guid.NewGuid(), name, calories, proteins, fats, carbs, isAlcoholic, containsLactose);
+        IsComposite = isComposite;
+        CreatedAt = DateTime.UtcNow;
+        UpdatedAt = CreatedAt;
     }
 
-    public void Update(string name, decimal calories, decimal proteins, decimal fats, decimal carbs, bool isAlcoholic, bool containsLactose)
-    {
-        Name = name;
-        Calories = calories;
-        Proteins = proteins;
-        Fats = fats;
-        Carbohydrates = carbs;
-        IsAlcoholic = isAlcoholic;
-        ContainsLactose = containsLactose;
-    }
+
 }
