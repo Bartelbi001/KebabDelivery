@@ -12,7 +12,7 @@ public class ProductSize
     public decimal Price { get; private set; }
     public int Amount { get; private set; }
 
-    private ProductSize() { }
+    protected ProductSize() { }
 
     public static Result<ProductSize> Create(Guid productId, string name, decimal price, int amount)
     {

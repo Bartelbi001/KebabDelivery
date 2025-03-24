@@ -9,7 +9,7 @@ public class Ingredient : Consumable
     public DateTime CreatedAt { get; private set; }
     public DateTime UpdatedAt { get; private set; }
 
-    private Ingredient() : base(string.Empty, false, false, 0, 0, 0, 0)
+    protected Ingredient() : base(string.Empty, false, false, 0, 0, 0, 0)
     {
         CreatedAt = DateTime.UtcNow;
         UpdatedAt = CreatedAt;

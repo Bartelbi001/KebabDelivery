@@ -13,7 +13,7 @@ public class IngredientIngredient
     public MeasurementUnit Unit { get; private set; }
     public DateTime CreatedAt { get; private set; }
 
-    private IngredientIngredient() { }
+    protected IngredientIngredient() { }
 
     public IngredientIngredient(Ingredient ingredient, Ingredient subIngredient, decimal amount, MeasurementUnit unit)
     {

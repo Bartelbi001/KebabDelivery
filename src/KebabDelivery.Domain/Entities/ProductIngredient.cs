@@ -12,7 +12,7 @@ public class ProductIngredient
 
     public decimal Quantity { get; private set; }
 
-    private ProductIngredient() { }
+    protected ProductIngredient() { }
 
     public static Result<ProductIngredient> Create(Guid productId, Guid ingredientId, decimal quantity)
     {
