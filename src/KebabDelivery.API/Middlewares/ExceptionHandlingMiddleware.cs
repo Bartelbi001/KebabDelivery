@@ -24,6 +24,10 @@ public class ExceptionHandlingMiddleware
         {
             await HandleValidationExceptionAsync(context, ex);
         }
+        catch (DomainValidationException ex)
+        {
+            await HandleExceptionAsync(context, ex, HttpStatusCode.BadRequest, "Business validation error.");
+        }
         catch (UnauthorizedAccessException ex)
         {
             await HandleExceptionAsync(context, ex, HttpStatusCode.Unauthorized, "Ошибка авторизации");
