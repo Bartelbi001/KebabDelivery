@@ -1,4 +1,6 @@
 ﻿using KebabDelivery.Domain.Base;
+using KebabDelivery.Domain.Enums;
+using KebabDelivery.Domain.Exceptions;
 
 namespace KebabDelivery.Domain.Entities;
 
