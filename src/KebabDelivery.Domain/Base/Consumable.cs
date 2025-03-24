@@ -16,10 +16,10 @@ public abstract class Consumable
     protected Consumable(string name, bool isAlcoholic, bool containsLactose, decimal calories, decimal proteins, decimal fats, decimal carbohydrates)
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new DomainValidationException("Имя не может быть пустым.");
+            throw new DomainValidationException("The name cannot be empty.");
 
         if (calories < 0 || proteins < 0 || fats < 0 || carbohydrates < 0)
-            throw new DomainValidationException("Значения БЖУ не могут быть отрицательными.");
+            throw new DomainValidationException("BJU values cannot be negative.");
 
         Id = Guid.NewGuid();
         Name = name;
