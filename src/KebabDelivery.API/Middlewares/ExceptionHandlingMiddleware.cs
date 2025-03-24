@@ -1,6 +1,7 @@
 ﻿using Serilog;
 using System.Net;
 using System.Text.Json;
+using KebabDelivery.Domain.Exceptions;
 using ValidationException = FluentValidation.ValidationException;
 
 namespace KebabDelivery.API.Middlewares;
