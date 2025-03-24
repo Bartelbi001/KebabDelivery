@@ -30,4 +30,15 @@ public abstract class Consumable
         Fats = fats;
         Carbohydrates = carbohydrates;
     }
+    
+    protected void UpdateNutrition(decimal calories, decimal proteins, decimal fats, decimal carbohydrates)
+    {
+        if (calories < 0 || proteins < 0 || fats < 0 || carbohydrates < 0)
+            throw new DomainValidationException("BJU values cannot be negative.");
+
+        Calories = calories;
+        Proteins = proteins;
+        Fats = fats;
+        Carbohydrates = carbohydrates;
+    }
 }
