@@ -6,9 +6,11 @@ namespace KebabDelivery.Domain.Entities;
 public class IngredientIngredient
 {
     public Guid IngredientId { get; private set; }
-    public Ingredient Ingredient { get; private set; }
+    public Ingredient Ingredient { get; private set; } = null!;
+    
     public Guid SubIngredientId { get; private set; }
-    public Ingredient SubIngredient { get; private set; }
+    public Ingredient SubIngredient { get; private set; } = null!;
+    
     public decimal Amount { get; private set; }
     public MeasurementUnit Unit { get; private set; }
     public DateTime CreatedAt { get; private set; }
