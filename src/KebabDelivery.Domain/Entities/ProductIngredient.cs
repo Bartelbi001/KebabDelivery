@@ -17,7 +17,7 @@ public class ProductIngredient
     public static Result<ProductIngredient> Create(Guid productId, Guid ingredientId, decimal quantity)
     {
         if (quantity <= 0)
-            return Result.Fail("Количество ингредиента должно быть положительным.");
+            return Result.Fail("The amount of the ingredient must be positive.");
 
         return Result.Ok(new ProductIngredient
         {

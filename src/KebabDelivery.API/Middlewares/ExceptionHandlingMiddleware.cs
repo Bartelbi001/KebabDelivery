@@ -31,19 +31,19 @@ public class ExceptionHandlingMiddleware
         }
         catch (UnauthorizedAccessException ex)
         {
-            await HandleExceptionAsync(context, ex, HttpStatusCode.Unauthorized, "Ошибка авторизации");
+            await HandleExceptionAsync(context, ex, HttpStatusCode.Unauthorized, "Authorization error.");
         }
         catch (KeyNotFoundException ex)
         {
-            await HandleExceptionAsync(context, ex, HttpStatusCode.NotFound, "Ресурс не найден");
+            await HandleExceptionAsync(context, ex, HttpStatusCode.NotFound, "The resource was not found.");
         }
         catch (InvalidOperationException ex)
         {
-            await HandleExceptionAsync(context, ex, HttpStatusCode.Conflict, "Конфликт данных");
+            await HandleExceptionAsync(context, ex, HttpStatusCode.Conflict, "Data conflict.");
         }
         catch (Exception ex)
         {
-            await HandleExceptionAsync(context, ex, HttpStatusCode.InternalServerError, "Внутренняя ошибка сервера");
+            await HandleExceptionAsync(context, ex, HttpStatusCode.InternalServerError, "Internal server error.");
         }
     }
 
@@ -60,11 +60,11 @@ public class ExceptionHandlingMiddleware
 
         var response = new
         {
-            Message = "Ошибка валидации",
+            Message = "Validation error.",
             Errors = errors
         };
 
-        Log.Warning("Ошибка валидации: {@Errors}", errors);
+        Log.Warning("Validation error: {@Errors}", errors);
 
         return context.Response.WriteAsync(JsonSerializer.Serialize(response));
     }
@@ -82,11 +82,11 @@ public class ExceptionHandlingMiddleware
 
         if (statusCode == HttpStatusCode.InternalServerError)
         {
-            Log.Fatal(ex, "Фатальная ошибка: {Message}", ex.Message);
+            Log.Fatal(ex, "Fatal error: {Message}", ex.Message);
         }
         else
         {
-            Log.Error(ex, "Произошла ошибка: {Message}", ex.Message);
+            Log.Error(ex, "An error has occurred: {Message}", ex.Message);
         }
 
         return context.Response.WriteAsync(JsonSerializer.Serialize(response));

@@ -17,13 +17,13 @@ public class ProductSize
     public static Result<ProductSize> Create(Guid productId, string name, decimal price, int amount)
     {
         if (string.IsNullOrWhiteSpace(name))
-            return Result.Fail("Название размера не может быть пустым.");
+            return Result.Fail("The size name cannot be empty.");
 
         if (price <= 0)
-            return Result.Fail("Цена должна быть положительной.");
+            return Result.Fail("The price should be positive.");
 
         if (amount <= 0)
-            return Result.Fail("Количество должно быть больше нуля.");
+            return Result.Fail("The quantity must be greater than zero.");
 
         return Result.Ok(new ProductSize
         {
