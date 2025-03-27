@@ -1,5 +1,6 @@
 ﻿using KebabDelivery.Domain.Enums;
 using KebabDelivery.Domain.Exceptions;
+using KebabDelivery.Domain.Guards;
 
 namespace KebabDelivery.Domain.Entities;
 
@@ -19,14 +20,9 @@ public class IngredientIngredient
 
     public IngredientIngredient(Ingredient ingredient, Ingredient subIngredient, decimal amount, MeasurementUnit unit)
     {
-        if (ingredient == null)
-            throw new DomainValidationException("The main ingredient cannot be null.");
-
-        if (subIngredient == null)
-            throw new DomainValidationException("The ingredient must not be null.");
-        
-        if (ingredient.Id == subIngredient.Id)
-            throw new DomainValidationException("An ingredient cannot be under an ingredient by itself.");
+        Guard.AgainstNull(ingredient, "Main ingredient cannot be null.");
+        Guard.AgainstNull(subIngredient, "Sub ingredient cannot be null.");
+        Guard.AgainstEqual(ingredient.Id, subIngredient.Id, "An ingredient cannot be under itself.");
         
         if (amount <= 0)
             throw new DomainValidationException("The number must be greater than 0.");
