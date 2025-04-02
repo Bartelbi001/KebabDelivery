@@ -1,6 +1,8 @@
 ﻿using KebabDelivery.Domain.Base;
-using KebabDelivery.Domain.Enums;
 using KebabDelivery.Domain.Exceptions;
+using KebabDelivery.Domain.Guards;
+using KebabDelivery.Domain.Services;
+using KebabDelivery.Domain.ValueObjects;
 
 namespace KebabDelivery.Domain.Entities;
 
@@ -8,77 +10,47 @@ public class Ingredient : Consumable
 {
     public bool IsComposite { get; private set; }
     public List<IngredientIngredient> SubIngredients { get; private set; } = new();
-    public DateTime CreatedAt { get; private set; }
-    public DateTime UpdatedAt { get; private set; }
 
-    protected Ingredient() : base(string.Empty, false, false, 0, 0, 0, 0)
-    {
-        CreatedAt = DateTime.UtcNow;
-        UpdatedAt = CreatedAt;
-    }
+    private Ingredient() { }
 
-    public Ingredient(string name, bool isComposite, decimal calories, decimal proteins, decimal fats, decimal carbohydrates, bool isAlcoholic, bool containsLactose)
-        : base(name, isAlcoholic, containsLactose, calories, proteins, fats, carbohydrates)
+    public Ingredient(string name, bool isComposite, Nutrition nutrition, bool isAlcoholic, bool containsLactose)
+        : base(name, isAlcoholic, containsLactose, nutrition)
     {
         IsComposite = isComposite;
-        CreatedAt = DateTime.UtcNow;
-        UpdatedAt = CreatedAt;
     }
 
-    public void AddSubIngredient(Ingredient ingredient, decimal amount, MeasurementUnit unit)
+    public void AddSubIngredient(IngredientIngredient subIngredient)
     {
+        Guard.AgainstNull(subIngredient, "SubIngredient is required.");
+        
         if (!IsComposite)
-            throw new DomainValidationException("A simple ingredient cannot contain sub-ingredients.");
+            throw new DomainValidationException("Cannot add sub-ingredients to a non-composite ingredient.");
 
-        bool duplicateById = SubIngredients.Any(i => i.SubIngredientId == ingredient.Id);
-        bool duplicateByName = SubIngredients.Any(i =>
-            i.SubIngredient.Name.Equals(ingredient.Name, StringComparison.OrdinalIgnoreCase));
+        if (SubIngredients.Any(i => i.SubIngredient.Id == subIngredient.SubIngredient.Id))
+            throw new DomainValidationException("Sub-ingredient already exists.");
 
-        if (duplicateById || duplicateByName)
-            throw new DomainValidationException($"Ingredient '{ingredient.Name}' has already been added to the list.");
-
-        SubIngredients.Add(new IngredientIngredient(this, ingredient, amount, unit));
-        RecalculateNutrition();
-        UpdatedAt = DateTime.UtcNow;
+        SubIngredients.Add(subIngredient);
+        UpdateNutrition(RecipeNutritionalAnalyzer.Calculate(SubIngredients));
+        SetUpdatedNow();
     }
 
-    public void RemoveSubIngredient(Guid ingredientId)
+    public void RemoveSubIngredient(Guid subIngredientId)
     {
-        if (!IsComposite)
-            throw new InvalidOperationException("A simple ingredient cannot contain sub-ingredients.");
-
-        var subIngredient = SubIngredients.FirstOrDefault(i => i.SubIngredientId == ingredientId);
-        if (subIngredient == null)
-            throw new InvalidOperationException("The ingredient was not found in the composition.");
-
-        SubIngredients.Remove(subIngredient);
-        RecalculateNutrition();
-        UpdatedAt = DateTime.UtcNow;
+        var sub = SubIngredients.FirstOrDefault(i => i.SubIngredient.Id == subIngredientId);
+        if (sub != null)
+            throw new DomainValidationException("Sub-ingredient not found.");
+            
+        SubIngredients.Remove(sub);
+        UpdateNutrition(RecipeNutritionalAnalyzer.Calculate(SubIngredients));
+        SetUpdatedNow();
     }
 
-    public void UpdateSubIngredients(List<IngredientIngredient> newSubIngredients)
+    public void UpdateSubIngredients(List<IngredientIngredient> subIngredients)
     {
-        if (!IsComposite)
-            throw new InvalidOperationException("A simple ingredient cannot contain sub-ingredients.");
-
-        if (newSubIngredients == null || newSubIngredients.Count == 0)
-            throw new InvalidOperationException("A compound ingredient must contain at least one sub ingredient.");
-
-        SubIngredients.Clear();
-        SubIngredients.AddRange(newSubIngredients);
-        RecalculateNutrition();
-        UpdatedAt = DateTime.UtcNow;
-    }
-
-    private void RecalculateNutrition()
-    {
-        if (!IsComposite) return;
-
-        UpdateNutrition(
-            SubIngredients.Sum(i => i.SubIngredient.Calories * (i.Amount / 100m)),
-            SubIngredients.Sum(i => i.SubIngredient.Proteins * (i.Amount / 100m)),
-            SubIngredients.Sum(i => i.SubIngredient.Fats * (i.Amount / 100m)),
-            SubIngredients.Sum(i => i.SubIngredient.Carbohydrates * (i.Amount / 100m))
-        );
+        Guard.AgainstNull(subIngredients, "SubIngredients are required.");
+        
+        SubIngredients = subIngredients;
+        UpdateNutrition(RecipeNutritionalAnalyzer.Calculate(SubIngredients));
+        SetUpdatedNow();
     }
 }
