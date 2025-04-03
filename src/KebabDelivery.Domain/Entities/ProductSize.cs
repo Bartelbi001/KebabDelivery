@@ -1,37 +1,28 @@
-﻿using FluentResults;
+﻿using KebabDelivery.Domain.Common;
+using KebabDelivery.Domain.Guards;
+using KebabDelivery.Domain.ValueObjects;
 
 namespace KebabDelivery.Domain.Entities;
 
-public class ProductSize
+public class ProductSize : EntityBase<Guid>
 {
-    public Guid Id { get; private set; }
     public Guid ProductId { get; private set; }
-    public Product Product { get; private set; }
-
     public string Name { get; private set; }
-    public decimal Price { get; private set; }
-    public int Amount { get; private set; }
+    public Measurement Size { get; private set; }
+    public Price Price { get; private set; }
+    
+    private ProductSize() { }
 
-    protected ProductSize() { }
-
-    public static Result<ProductSize> Create(Guid productId, string name, decimal price, int amount)
+    public ProductSize(Guid productId, string name, Measurement size, Price price)
+        : base(Guid.NewGuid())
     {
-        if (string.IsNullOrWhiteSpace(name))
-            return Result.Fail("The size name cannot be empty.");
-
-        if (price <= 0)
-            return Result.Fail("The price should be positive.");
-
-        if (amount <= 0)
-            return Result.Fail("The quantity must be greater than zero.");
-
-        return Result.Ok(new ProductSize
-        {
-            Id = Guid.NewGuid(),
-            ProductId = productId,
-            Name = name,
-            Price = price,
-            Amount = amount
-        });
+        Guard.AgainstNullOrWhiteSpace(name, "Size name is required.");
+        Guard.AgainstNull(size, "Measurement is required.");
+        Guard.AgainstNull(price, "Price is required.");
+        
+        ProductId = productId;
+        Name = name.Trim();
+        Size = size;
+        Price = price;
     }
 }
