@@ -1,29 +1,34 @@
 ﻿using FluentResults;
+using KebabDelivery.Domain.Guards;
+using KebabDelivery.Domain.ValueObjects;
 
 namespace KebabDelivery.Domain.Entities;
 
 public class ProductIngredient
 {
     public Guid ProductId { get; private set; }
-    public Product Product { get; private set; }
+    public Product Product { get; private set; } = null!;
 
     public Guid IngredientId { get; private set; }
-    public Ingredient Ingredient { get; private set; }
+    public Ingredient Ingredient { get; private set; } = null!;
 
-    public decimal Quantity { get; private set; }
+    public Measurement Measurement { get; private set; }
+    public DateTime CreatedDate { get; private set; }
 
-    protected ProductIngredient() { }
+    private ProductIngredient() { }
 
-    public static Result<ProductIngredient> Create(Guid productId, Guid ingredientId, decimal quantity)
+    public ProductIngredient(Product product, Ingredient ingredient, Measurement measurement)
     {
-        if (quantity <= 0)
-            return Result.Fail("The amount of the ingredient must be positive.");
-
-        return Result.Ok(new ProductIngredient
-        {
-            ProductId = productId,
-            IngredientId = ingredientId,
-            Quantity = quantity
-        });
+        Guard.AgainstNull(product, "Product is required.");
+        Guard.AgainstNull(ingredient, "Ingredient is required.");
+        Guard.AgainstEqual(product.Id, ingredient.Id, "Product cannot contain itself.");
+        Guard.AgainstNull(Measurement, "Measurement is required.");
+        
+        Product = product;
+        ProductId = product.Id;
+        Ingredient = ingredient;
+        IngredientId = ingredient.Id;
+        Measurement = measurement;
+        CreatedDate = DateTime.UtcNow;
     }
 }
