@@ -25,4 +25,10 @@ public class ProductSize : EntityBase<Guid>
         Size = size;
         Price = price;
     }
+
+    public void UpdatePrice(Price newPrice)
+    {
+        Guard.AgainstNull(newPrice, "Price is required.");
+        Price = newPrice;
+    }
 }
