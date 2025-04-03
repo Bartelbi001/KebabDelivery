@@ -30,4 +30,68 @@ public class Product : Consumable
         IsAvailable = true;
         IsDeleted = false;
     }
+
+    public void SetPrice(Price newPrice)
+    {
+        Guard.AgainstNull(newPrice, "Price is required.");
+        
+        Price = newPrice;
+        SetUpdatedNow();
+    }
+
+    public void ToggleAvailability()
+    {
+        IsAvailable = !IsAvailable;
+        SetUpdatedNow();
+    }
+
+    public void Delete()
+    {
+        IsDeleted = true;
+        SetUpdatedNow();
+    }
+
+    public void AddSize(ProductSize size)
+    {
+        Guard.AgainstNull(size, "Size is required.");
+        
+        Sizes.Add(size);
+        SetUpdatedNow();
+    }
+
+    public void RemoveSize(Guid sizeId)
+    {
+        var size = Sizes.FirstOrDefault(s => s.Id == sizeId);
+        if (size is null) return;
+        
+        Sizes.Remove(size);
+        SetUpdatedNow();
+    }
+
+    public void AddIngredient(ProductIngredient ingredient)
+    {
+        Guard.AgainstNull(ingredient, "Ingredient is required.");
+        if (Ingredients.Any(i => i.IngredientId == ingredient.IngredientId))
+            throw new DomainValidationException("Ingredient already added.");
+        
+        Ingredients.Add(ingredient);
+        SetUpdatedNow();
+    }
+
+    public void RemoveIngredient(Guid ingredientId)
+    {
+        var item = Ingredients.FirstOrDefault(i => i.IngredientId == ingredientId);
+        if (item is null) return;
+        
+        Ingredients.Remove(item);
+        SetUpdatedNow();
+    }
+
+    public void UpdateIngredients(List<ProductIngredient> newIngredients)
+    {
+        Guard.AgainstNull(newIngredients, "Ingredient list is required.");
+        
+        Ingredients = newIngredients;
+        SetUpdatedNow();
+    }
 }
