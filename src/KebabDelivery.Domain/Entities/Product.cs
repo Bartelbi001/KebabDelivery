@@ -1,39 +1,33 @@
-﻿namespace KebabDelivery.Domain.Entities;
+﻿using KebabDelivery.Domain.Base;
+using KebabDelivery.Domain.Exceptions;
+using KebabDelivery.Domain.Guards;
+using KebabDelivery.Domain.ValueObjects;
 
-public class Product
+namespace KebabDelivery.Domain.Entities;
+
+public class Product : Consumable
 {
-    public Guid Id { get; private set; }
-    public string Name { get; private set; }
-    public string Description { get; private set; }
-    public string ImageUrl { get; private set; }
-    public bool IsComposite { get; private set; }
-    public bool IsVisible { get; private set; } = true;
-    public List<ProductIngredient> ProductIngredients { get; private set; } = new();
-    public List<ProductSize> ProductSizes { get; private set; } = new();
+    public Price Price { get; private set; }
+    public string Description { get; private set; } = string.Empty;
+    public string? ImageUrl { get; private set; }
+    public bool IsAvailable { get; private set; }
+    public bool IsDeleted { get; private set; }
 
-    protected Product() { }
+    public List<ProductSize> Sizes { get; private set; } = new();
+    public List<ProductIngredient> Ingredients { get; private set; } = new();
+    
+    private Product() { }
 
-    private Product(Guid id, string name, string description, string imageUrl, bool isComposite, bool isVisible)
+    public Product(string name, Nutrition nutrition, Price price, bool isAlcoholic, bool containsLactose,
+        string? description = null, string? imageUrl = null)
+        : base(name, isAlcoholic, containsLactose, nutrition)
     {
-        Id = id;
-        Name = name;
-        Description = description;
-        ImageUrl = imageUrl;
-        IsComposite = isComposite;
-        IsVisible = isVisible;
-    }
-
-    public static Product Create(string name, string description, string imageUrl, bool isComposite, bool isVisible)
-    {
-        return new Product(Guid.NewGuid(), name, description, imageUrl, isComposite, isVisible);
-    }
-
-    public void Update(string name, string description, string imageUrl, bool isComrosite, bool isVisible)
-    {
-        Name = name;
-        Description = description;
-        ImageUrl = imageUrl;
-        IsComposite = isComrosite;
-        IsVisible = isVisible;
+        Guard.AgainstNull(price, "Price is required.");
+        
+        Price = price;
+        Description = description?.Trim() ?? string.Empty;
+        ImageUrl = imageUrl?.Trim();
+        IsAvailable = true;
+        IsDeleted = false;
     }
 }
