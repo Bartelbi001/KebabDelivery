@@ -12,13 +12,13 @@ public static class Guard
 
     public static void AgainstNullOrWhiteSpace(string? value, string message)
     {
-        if(string.IsNullOrWhiteSpace(value))
+        if (string.IsNullOrWhiteSpace(value))
             throw new DomainValidationException(message);
     }
 
     public static void AgainstNegative(decimal value, string message)
     {
-        if(value < 0)
+        if (value < 0)
             throw new DomainValidationException(message);
     }
 
@@ -30,7 +30,7 @@ public static class Guard
 
     public static void AgainstEqual<T>(T? value, T? other, string message)
     {
-        if(EqualityComparer<T>.Default.Equals(value, other))
+        if (EqualityComparer<T>.Default.Equals(value, other))
             throw new DomainValidationException(message);
     }
 

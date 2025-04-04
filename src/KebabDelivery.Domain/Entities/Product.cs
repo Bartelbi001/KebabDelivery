@@ -7,23 +7,16 @@ namespace KebabDelivery.Domain.Entities;
 
 public class Product : Consumable
 {
-    public Price Price { get; private set; }
-    public string Description { get; private set; } = string.Empty;
-    public string? ImageUrl { get; private set; }
-    public bool IsAvailable { get; private set; }
-    public bool IsDeleted { get; private set; }
-
-    public List<ProductSize> Sizes { get; private set; } = new();
-    public List<ProductIngredient> Ingredients { get; private set; } = new();
-    
-    private Product() { }
+    private Product()
+    {
+    }
 
     public Product(string name, Nutrition nutrition, Price price, bool isAlcoholic, bool containsLactose,
         string? description = null, string? imageUrl = null)
         : base(name, isAlcoholic, containsLactose, nutrition)
     {
         Guard.AgainstNull(price, "Price is required.");
-        
+
         Price = price;
         Description = description?.Trim() ?? string.Empty;
         ImageUrl = imageUrl?.Trim();
@@ -31,10 +24,19 @@ public class Product : Consumable
         IsDeleted = false;
     }
 
+    public Price Price { get; private set; }
+    public string Description { get; private set; } = string.Empty;
+    public string? ImageUrl { get; private set; }
+    public bool IsAvailable { get; private set; }
+    public bool IsDeleted { get; private set; }
+
+    public List<ProductSize> Sizes { get; } = new();
+    public List<ProductIngredient> Ingredients { get; private set; } = new();
+
     public void SetPrice(Price newPrice)
     {
         Guard.AgainstNull(newPrice, "Price is required.");
-        
+
         Price = newPrice;
         SetUpdatedNow();
     }
@@ -54,7 +56,7 @@ public class Product : Consumable
     public void AddSize(ProductSize size)
     {
         Guard.AgainstNull(size, "Size is required.");
-        
+
         Sizes.Add(size);
         SetUpdatedNow();
     }
@@ -63,7 +65,7 @@ public class Product : Consumable
     {
         var size = Sizes.FirstOrDefault(s => s.Id == sizeId);
         if (size is null) return;
-        
+
         Sizes.Remove(size);
         SetUpdatedNow();
     }
@@ -73,7 +75,7 @@ public class Product : Consumable
         Guard.AgainstNull(ingredient, "Ingredient is required.");
         if (Ingredients.Any(i => i.IngredientId == ingredient.IngredientId))
             throw new DomainValidationException("Ingredient already added.");
-        
+
         Ingredients.Add(ingredient);
         SetUpdatedNow();
     }
@@ -82,7 +84,7 @@ public class Product : Consumable
     {
         var item = Ingredients.FirstOrDefault(i => i.IngredientId == ingredientId);
         if (item is null) return;
-        
+
         Ingredients.Remove(item);
         SetUpdatedNow();
     }
@@ -90,7 +92,7 @@ public class Product : Consumable
     public void UpdateIngredients(List<ProductIngredient> newIngredients)
     {
         Guard.AgainstNull(newIngredients, "Ingredient list is required.");
-        
+
         Ingredients = newIngredients;
         SetUpdatedNow();
     }

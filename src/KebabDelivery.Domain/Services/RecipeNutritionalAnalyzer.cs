@@ -10,7 +10,7 @@ public static class RecipeNutritionalAnalyzer
         var calories = subIngredients.Sum(i => i.SubIngredient.Nutrition.Calories * (i.Measurement.Amount / 100));
         var proteins = subIngredients.Sum(i => i.SubIngredient.Nutrition.Proteins * (i.Measurement.Amount / 100));
         var fats = subIngredients.Sum(i => i.SubIngredient.Nutrition.Fats * (i.Measurement.Amount / 100));
-        var carbohydrates = subIngredients.Sum(i => i.SubIngredient.Nutrition.Carbohydrates * (i.Measurement.Amount / 100));
+        var carbohydrates =  subIngredients.Sum(i => i.SubIngredient.Nutrition.Carbohydrates * (i.Measurement.Amount / 100));
 
         return new Nutrition(calories, proteins, fats, carbohydrates);
     }

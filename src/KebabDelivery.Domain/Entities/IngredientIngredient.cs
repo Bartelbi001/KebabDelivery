@@ -5,17 +5,9 @@ namespace KebabDelivery.Domain.Entities;
 
 public class IngredientIngredient
 {
-    public Guid IngredientId { get; private set; }
-    public Ingredient Ingredient { get; private set; } = null!;
-    
-    public Guid SubIngredientId { get; private set; }
-    public Ingredient SubIngredient { get; private set; } = null!;
-    
-    
-    public Measurement Measurement { get; private set; } = null!;
-    public DateTime CreatedAt { get; private set; }
-
-    private IngredientIngredient() { }
+    private IngredientIngredient()
+    {
+    }
 
     public IngredientIngredient(Ingredient ingredient, Ingredient subIngredient, Measurement measurement)
     {
@@ -23,7 +15,7 @@ public class IngredientIngredient
         Guard.AgainstNull(subIngredient, "SubIngredient is required.");
         Guard.AgainstNull(measurement, "Measurement is required.");
         Guard.AgainstEqual(ingredient.Id, subIngredient.Id, "An ingredient cannot contain itself.");
-        
+
         Ingredient = ingredient;
         IngredientId = ingredient.Id;
         SubIngredientId = subIngredient.Id;
@@ -31,4 +23,14 @@ public class IngredientIngredient
         Measurement = measurement;
         CreatedAt = DateTime.Now;
     }
+
+    public Guid IngredientId { get; private set; }
+    public Ingredient Ingredient { get; private set; } = null!;
+
+    public Guid SubIngredientId { get; private set; }
+    public Ingredient SubIngredient { get; private set; } = null!;
+
+
+    public Measurement Measurement { get; private set; } = null!;
+    public DateTime CreatedAt { get; private set; }
 }

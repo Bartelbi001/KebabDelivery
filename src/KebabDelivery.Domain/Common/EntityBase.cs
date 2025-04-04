@@ -2,10 +2,6 @@ namespace KebabDelivery.Domain.Common;
 
 public abstract class EntityBase<TId>
 {
-    public TId Id { get; protected set; } = default!;
-    public DateTime CreatedAt { get; protected set; } = DateTime.UtcNow;
-    public DateTime? UpdatedAt { get; protected set; }
-
     protected EntityBase() { }
 
     protected EntityBase(TId id)
@@ -14,6 +10,10 @@ public abstract class EntityBase<TId>
         CreatedAt = DateTime.UtcNow;
     }
 
+    public TId Id { get; protected set; } = default!;
+    public DateTime CreatedAt { get; protected set; } = DateTime.UtcNow;
+    public DateTime? UpdatedAt { get; protected set; }
+
     public void SetUpdatedNow()
     {
         UpdatedAt = DateTime.UtcNow;
@@ -21,9 +21,9 @@ public abstract class EntityBase<TId>
 
     public override bool Equals(object? obj)
     {
-        if(obj is not EntityBase<TId> other)
+        if (obj is not EntityBase<TId> other)
             return false;
-        
+
         return EqualityComparer<TId>.Default.Equals(Id, other.Id);
     }
 
