@@ -1,8 +1,5 @@
 ﻿using FluentValidation;
 using KebabDelivery.API.Middlewares;
-using KebabDelivery.Application.Interfaces.Services;
-using KebabDelivery.Application.Interfaces.Services.Interfaces;
-using KebabDelivery.Application.Validators;
 using KebabDelivery.Infrastructure.Data;
 using KebabDelivery.Infrastructure.Data.Repositories;
 using KebabDelivery.Infrastructure.Data.Repositories.Interfaces;
@@ -13,10 +10,7 @@ using Serilog;
 var builder = WebApplication.CreateBuilder(args);
 
 // ✅ Настраиваем Serilog из appsettings.json
-builder.Host.UseSerilog((context, config) =>
-{
-    config.ReadFrom.Configuration(context.Configuration);
-});
+builder.Host.UseSerilog((context, config) => { config.ReadFrom.Configuration(context.Configuration); });
 
 // ✅ Добавляем сервисы
 builder.Services.AddControllers();
@@ -65,4 +59,6 @@ app.MapControllers();
 app.Run();
 
 // Позволяет тестировать приложение
-public partial class Program { }
+public partial class Program
+{
+}
