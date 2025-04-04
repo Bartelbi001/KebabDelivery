@@ -1,6 +1,7 @@
 ﻿using KebabDelivery.Domain.Base;
 using KebabDelivery.Domain.Exceptions;
 using KebabDelivery.Domain.Guards;
+using KebabDelivery.Domain.Services;
 using KebabDelivery.Domain.ValueObjects;
 
 namespace KebabDelivery.Domain.Entities;
@@ -77,6 +78,7 @@ public class Product : Consumable
             throw new DomainValidationException("Ingredient already added.");
 
         Ingredients.Add(ingredient);
+        UpdateNutrition(ProductNutritionCalculator.Calculate(Ingredients));
         SetUpdatedNow();
     }
 
@@ -86,6 +88,7 @@ public class Product : Consumable
         if (item is null) return;
 
         Ingredients.Remove(item);
+        UpdateNutrition(ProductNutritionCalculator.Calculate(Ingredients));
         SetUpdatedNow();
     }
 
@@ -94,6 +97,7 @@ public class Product : Consumable
         Guard.AgainstNull(newIngredients, "Ingredient list is required.");
 
         Ingredients = newIngredients;
+        UpdateNutrition(ProductNutritionCalculator.Calculate(Ingredients));
         SetUpdatedNow();
     }
 }
