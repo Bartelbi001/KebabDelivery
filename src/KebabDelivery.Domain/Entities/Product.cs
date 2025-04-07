@@ -34,6 +34,18 @@ public class Product : Consumable
     public List<ProductSize> Sizes { get; } = new();
     public List<ProductIngredient> Ingredients { get; private set; } = new();
 
+    public static Product Create(
+        string name,
+        Nutrition nutrition,
+        Price price,
+        bool isAlcoholic,
+        bool containsLactose,
+        string? description = null,
+        string? imageUrl = null)
+    {
+        return new Product(name, nutrition, price, isAlcoholic, containsLactose, description, imageUrl);
+    }
+
     public void SetPrice(Price newPrice)
     {
         Guard.AgainstNull(newPrice, "Price is required.");
