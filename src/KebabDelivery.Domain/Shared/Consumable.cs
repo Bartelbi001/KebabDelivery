@@ -30,6 +30,7 @@ public abstract class Consumable : EntityBase<Guid>
     protected void UpdateNutrition(Nutrition newNutrition)
     {
         Guard.AgainstNull(newNutrition, "Nutrition is required.");
+
         Nutrition = newNutrition;
         SetUpdatedNow();
     }
