@@ -12,7 +12,7 @@ public class Product : Consumable
     {
     }
 
-    public Product(string name, Nutrition nutrition, Price price, bool isAlcoholic, bool containsLactose,
+    private Product(string name, Nutrition nutrition, Price price, bool isAlcoholic, bool containsLactose,
         string? description = null, string? imageUrl = null)
         : base(name, isAlcoholic, containsLactose, nutrition)
     {
